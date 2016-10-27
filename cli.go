@@ -32,7 +32,8 @@ type ConfigOpts struct {
 	tlsCa    string
 	useTls   bool
 
-	publish bool
+	publish     bool
+	contentType string
 
 	consume        bool
 	consumeRequeue bool
@@ -110,6 +111,7 @@ func initFlags(opts *ConfigOpts) {
 
 	// publish opts
 	flag.BoolVar(&opts.publish, "publish", false, "Set to publish mode")
+	flag.StringVar(&opts.contentType, "contentType", "text/plain", "Payload content type")
 
 	// consume opts
 	flag.BoolVar(&opts.consume, "consume", false, "Set to consume mode")
@@ -239,7 +241,7 @@ func publish(opts *ConfigOpts, conn *amqp.Connection) {
 				false,
 				amqp.Publishing{
 					Headers:         amqp.Table{},
-					ContentType:     "text/plain",
+					ContentType:     opts.contentType,
 					ContentEncoding: "",
 					Body:            inputBytes[:len(inputBytes)-1],
 					DeliveryMode:    amqp.Persistent,
